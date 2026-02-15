@@ -4,10 +4,10 @@ import { useRouter } from "next/navigation";
 import Benefits from "../Landing/Benefits/page";
 
 const coffeeTypes = [
-  { name: "Espresso", image: "/images/Espresso.jpg" },
-  { name: "Latte", image: "/images/Latte.jpg" },
-  { name: "Cappuccino", image: "/images/Cappuccino.jpg" },
-  { name: "Americano", image: "/images/Americano.jpg" },
+  { name: "Wedding Cakes", image: "/images/wedding cake.jpg" },
+  { name: "Baguette", image: "/images/baguette.jpg" },
+  { name: "Fiber Bread", image: "/images/Fiberbread.jpg" },
+  { name: "Cheese Bread", image: "/images/cheesebread.jpg" },
 ];
 
 const OurCoffee: React.FC = () => {

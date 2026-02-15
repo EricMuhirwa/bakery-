@@ -48,14 +48,14 @@ export default function Footer() {
           </div>
           <p className="font-semibold">SUPPORT</p>
           <a href="tel:+48452037323" className="text-white hover:text-gray-300 transition-colors">
-            +250785206973
+          +250 788 563 705
           </a>
         </div>
       </div>
 
       {/* Footer Bottom Section */}
       <div className="text-gray-300 space-y-2 text-center">
-        <p>We&rsquo;re located in The Kigali City — a historic MMM</p>
+        <p>We&rsquo;re located in The Bugesera  — a historic MMM</p>
         <p>neighborhood with a rich history of black entrepreneurs</p>
         <p>and culture. We&rsquo;re honored to have you as a partner</p>
         <p>in this journey to revitalize black and brown entrepreneurship.</p>

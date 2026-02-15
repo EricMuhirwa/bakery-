@@ -8,7 +8,7 @@ import { useSubscriptionsQuery, useSingleSubscriptionQuery } from '../../../lib/
 import { useBuySubscriptionMutation } from '../../../lib/redux/slices/PaymentSlice';
 import { Elements, useStripe, useElements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
-import b from "../../../../public/images/Americano.jpg";
+import b from "../../../../public/images/cheesebread.jpg";
 import { toast } from 'sonner';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
@@ -111,7 +111,7 @@ const PaymentForm = () => {
             id: '2',
             name: 'monthly',
             price: 49.99,
-            imageSrc: '/images/D.webp'
+            imageSrc: '/images/wedding cake.jpg'
         },
         {
             id: '3',
@@ -132,7 +132,7 @@ const PaymentForm = () => {
         switch (name) {
             case 'weekly': return 'Weekly Plan';
             case 'monthly': return 'Monthly Plan';
-            case 'yearly': return 'Yearly Plan';
+            case 'yearly': return 'Daily Plan';
             default: return name;
         }
     };
@@ -141,8 +141,8 @@ const PaymentForm = () => {
         switch (name) {
             case 'weekly': return `$${price.toFixed(2)}/week`;
             case 'monthly': return `$${price.toFixed(2)}/month`;
-            case 'yearly': return `$${price.toFixed(2)}/year`;
-            default: return `$${price}`;
+            case 'yearly': return `$${price.toFixed(2)}/Daily`;
+            default: return `RWF ${price}`;
         }
     };
 
@@ -246,9 +246,9 @@ const PaymentForm = () => {
                 <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url('/images/me5.webp')" }}></div>
                 <div className="absolute inset-0 bg-black/50"></div>
                 <div className="relative z-10 px-6">
-                    <h1 className="text-4xl md:text-5xl font-bold mb-4">Discover the World Through Coffee</h1>
+                    <h1 className="text-4xl md:text-5xl font-bold mb-4">Discover the World Through Ineza</h1>
                     <p className="mb-6 text-lg max-w-lg mx-auto">
-                        Explore single-origin coffees from the best growers worldwide. Delivered fresh to your door.
+                    “Taste Breads from Every Corner of the World”
                     </p>
                 </div>
             </section>
@@ -365,7 +365,7 @@ const PaymentForm = () => {
                                                     className="rounded-full"
                                                 />
                                             </div>
-                                            <h3 className="text-xl font-bold mb-2">Whole Beans</h3>
+                                            <h3 className="text-xl font-bold mb-2">Whole Wheat</h3>
                                             <p className="text-gray-600 text-center">For those who prefer to grind fresh</p>
                                         </div>
                                     </div>

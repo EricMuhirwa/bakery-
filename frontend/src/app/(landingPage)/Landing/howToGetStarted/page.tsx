@@ -4,7 +4,7 @@ import Image from 'next/image';
 const steps = [
     {
         number: 1,
-        title: 'Sign up on Uruyange Coffee',
+        title: 'Sign up on Ineza Bakery',
         description: 'Start enjoy The Subscription Service',
         image: '/images/ch1.JPG'
     },
@@ -12,13 +12,13 @@ const steps = [
         number: 2,
         title: 'Coose a Subscription',
         description: 'Choose a subscription plan that suits your needs and budget',
-        image: '/images/ch2.JPG'
+        image: '/images/wedding bread.JPG'
     },
     {
         number: 3,
         title: 'Pay for your Subscription',
         description: 'Pay for your subscription using our secure payment gateway',
-        image: '/images/ch2.JPG'
+        image: '/images/cheese brea.JPG'
     },
     {
         number: 4,
