@@ -24,7 +24,7 @@ const OurCoffee: React.FC = () => {
 
         {/* Hero Content */}
         <div className="relative z-10 px-6">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Discover the World Through Bakery</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">Discover the World Through CEBK Bakery Ltd</h1>
           <p className="mb-6 text-lg max-w-lg mx-auto">
             Explore single-origin breads from the best bakers worldwide. Delivered fresh to your door.
           </p>

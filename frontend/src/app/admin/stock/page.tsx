@@ -508,8 +508,7 @@ const StockManagementPage = () => {
                         <div>
                             <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
                                 <Package className="w-8 h-8 text-orange-600" />
-                                Stock Management & Analytics
-                            </h1>
+                                All our Stock Management                            </h1>
                             <p className="text-gray-600 mt-1">Complete inventory tracking with revenue analytics</p>
                         </div>
                         <div className="flex gap-3">
@@ -531,98 +530,9 @@ const StockManagementPage = () => {
                     </div>
                 </div>
 
-                {/* Time Filter Tabs */}
-                <div className="mb-6 bg-white rounded-lg shadow-md p-4">
-                    <div className="flex items-center justify-between">
-                        <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                            <TrendingUp className="w-5 h-5 text-orange-600" />
-                            Revenue Analytics - {getPeriodLabel()}
-                        </h3>
-                        <div className="flex gap-2">
-                            {(['daily', 'monthly', 'yearly'] as TimeFilter[]).map((filter) => (
-                                <button
-                                    key={filter}
-                                    onClick={() => setTimeFilter(filter)}
-                                    className={`px-4 py-2 rounded-lg font-medium capitalize transition-colors ${timeFilter === filter
-                                        ? 'bg-orange-600 text-white'
-                                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                                        }`}
-                                >
-                                    {filter}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-                </div>
 
-                {/* Statistics Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                    <div className="bg-white rounded-xl shadow-md p-6 border-l-4 border-blue-500">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-gray-600 text-sm font-medium">Total Stock Items</p>
-                                <p className="text-3xl font-bold text-gray-900 mt-1">
-                                    {stockItems.length}
-                                </p>
-                                <p className="text-xs text-gray-500 mt-1">
-                                    {coffeeItems.length} Ineza products total
-                                </p>
-                            </div>
-                            <div className="bg-blue-100 p-3 rounded-lg">
-                                <Box className="w-8 h-8 text-blue-600" />
-                            </div>
-                        </div>
-                    </div>
 
-                    <div className="bg-white rounded-xl shadow-md p-6 border-l-4 border-green-500">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-gray-600 text-sm font-medium">Revenue {getPeriodLabel()}</p>
-                                <p className="text-3xl font-bold text-green-600 mt-1">
-                                    {formatCurrency(financialStats.totalRevenue)}
-                                </p>
-                                <p className="text-xs text-gray-500 mt-1">
-                                    {financialStats.uniqueCustomers} unique customers
-                                </p>
-                            </div>
-                            <div className="bg-green-100 p-3 rounded-lg">
-                                <CreditCard className="w-8 h-8 text-green-600" />
-                            </div>
-                        </div>
-                    </div>
 
-                    <div className="bg-white rounded-xl shadow-md p-6 border-l-4 border-purple-500">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-gray-600 text-sm font-medium">Subscription Revenue</p>
-                                <p className="text-3xl font-bold text-purple-600 mt-1">
-                                    {formatCurrency(financialStats.subscriptionRevenue)}
-                                </p>
-                                <p className="text-xs text-gray-500 mt-1">
-                                    {financialStats.newSubscriptions} new subscriptions
-                                </p>
-                            </div>
-                            <div className="bg-purple-100 p-3 rounded-lg">
-                                <Users className="w-8 h-8 text-purple-600" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="bg-white rounded-xl shadow-md p-6 border-l-4 border-orange-500">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-gray-600 text-sm font-medium">Low Stock Alerts</p>
-                                <p className="text-3xl font-bold text-orange-600 mt-1">
-                                    {lowStockItems.length}
-                                </p>
-                                <p className="text-xs text-gray-500 mt-1">Need reorder</p>
-                            </div>
-                            <div className="bg-orange-100 p-3 rounded-lg">
-                                <AlertTriangle className="w-8 h-8 text-orange-600" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
                 {/* Coffee Products Sync Status */}
                 {missingStockItems.length > 0 && (
@@ -633,7 +543,7 @@ const StockManagementPage = () => {
                                     <Coffee className="w-6 h-6 text-white" />
                                 </div>
                                 <div>
-                                    <h3 className="text-lg font-semibold text-gray-900">Ineza Products Need Setup</h3>
+                                    <h3 className="text-lg font-semibold text-gray-900">CEBK Ltd Products Need Setup</h3>
                                     <p className="text-sm text-gray-600">
                                         {missingStockItems.length} coffee product{missingStockItems.length > 1 ? 's' : ''} need to be added to stock system
                                     </p>
@@ -660,7 +570,7 @@ const StockManagementPage = () => {
                                         )}
                                         <div className="flex-1">
                                             <p className="font-medium text-gray-900">{coffee.title}</p>
-                                            <p className="text-sm text-gray-600">Price: {formatCurrency(coffee.price)}</p>
+                                            <p className="text-sm text-gray-600"></p>
                                         </div>
                                         <button
                                             onClick={() => handleCreateStockItem(coffee)}
@@ -679,7 +589,7 @@ const StockManagementPage = () => {
                             </div>
                             {missingStockItems.length > 5 && (
                                 <p className="text-sm text-gray-600 mt-3">
-                                    +{missingStockItems.length - 5} more Ineza products
+                                    +{missingStockItems.length - 5} more  products
                                 </p>
                             )}
                         </div>
@@ -771,7 +681,7 @@ const StockManagementPage = () => {
                                         <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase">Type</th>
                                         <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase">Quantity</th>
                                         <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase">Stock Change</th>
-                                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase">Reference</th>
+                                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase">Code</th>
                                         <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase">User</th>
                                         <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase">Actions</th>
                                     </tr>
@@ -808,7 +718,7 @@ const StockManagementPage = () => {
                                                         {movement.type === 'IN' ? '+' : '-'}{movement.quantity}
                                                     </span>
                                                 </td>
-                                                <td className="px-6 py-4">
+                                                <td className="px-8 py-9">
                                                     <div className="flex items-center gap-2 text-sm">
                                                         <span className="text-gray-500">{movement.previousStock}</span>
                                                         <span className="text-gray-400">→</span>
@@ -902,14 +812,14 @@ const StockManagementPage = () => {
                                 onClick={() => setShowStockInModal(false)}
                                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                             >
-                                <X className="w-6 h-6 text-gray-500" />
+                                <X className="w-6 h-6 text-green-500" />
                             </button>
                         </div>
 
                         <div className="p-6">
                             <div className="space-y-4">
                                 <div>
-                                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                    <label className="block text-sm font-semibold text-blue-700 mb-2">
                                         Select Item *
                                     </label>
                                     <select

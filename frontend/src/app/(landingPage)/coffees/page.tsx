@@ -57,7 +57,7 @@ const CoffeesPage: React.FC = () => {
                                     />
                                 </div>
                                 <h3 className="mt-4 text-lg font-semibold text-gray-800">{coffee.title}</h3>
-                                <p className="text-gray-600">${coffee.price.toFixed(2)}</p>
+                                <p className="text-gray-600">RWF {coffee.price.toFixed(2)}</p>
                             </div>
                         </Link>
                     ))}

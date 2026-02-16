@@ -17,7 +17,7 @@ const FAQ: React.FC = () => {
 
   const faqData: FAQItem[] = [
     {
-      question: "What services does Uruyange Coffee provide?",
+      question: "What services does CEBK bakery Ltd provide?",
       answer:
         "We provide premium coffee sourcing, quality assurance, export logistics, and partnership opportunities for coffee importers worldwide.",
     },
@@ -29,11 +29,11 @@ const FAQ: React.FC = () => {
     {
       question: "How can I get in touch for a partnership?",
       answer:
-        "You can use the contact form on our Contact page or email us directly at info@uruyangecoffee.com.",
+        "You can use the contact form on our Contact page or email us directly at info@cebkltd.com.",
     },
     {
-        question: 'What makes Uruyange Coffee special?',
-        answer: 'Uruyange Coffee is sourced from the finest high-altitude farms in Rwanda, ensuring rich flavors and ethical sourcing.',
+        question: 'What makes CEBK bakery Ltd special?',
+        answer: 'CEBK bakery Ltd is sourced from the finest high-altitude farms in Rwanda, ensuring rich flavors and ethical sourcing.',
       },
       {
         question: 'Do you offer international shipping?',

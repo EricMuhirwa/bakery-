@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
-import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
+import React, { useState, ChangeEvent, FormEvent } from "react";
 import { useSession } from "next-auth/react";
 import {
     useDailySalesQuery,
@@ -17,6 +16,8 @@ interface DailySale {
     quantitySold: number;
     pricePerUnit: number;
     totalPrice: number;
+    remainingStock: number;
+    saleDate: string;
 }
 
 interface DailySaleUpdateData {
@@ -26,81 +27,97 @@ interface DailySaleUpdateData {
 
 const DailySalesManagement: React.FC = () => {
     const { data: sessionData } = useSession();
+
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalMode, setModalMode] = useState<"create" | "edit">("create");
     const [searchTerm, setSearchTerm] = useState("");
+    const [selectedDate, setSelectedDate] = useState("");
+
     const [currentDailySale, setCurrentDailySale] = useState<DailySale>({
         item: "",
         openingStock: 0,
         quantitySold: 0,
         pricePerUnit: 0,
         totalPrice: 0,
+        remainingStock: 0,
+        saleDate: "",
     });
 
-    const { data: dailySales = [], isLoading, refetch, isError, error } = useDailySalesQuery({});
+    const { data: dailySales = [], isLoading, refetch } =
+        useDailySalesQuery({});
+
     const [createDailySale] = useCreateDailySaleMutation();
     const [updateDailySale] = useUpdateDailySaleMutation();
     const [deleteDailySale] = useDeleteDailySaleMutation();
 
-    const filteredDailySales = dailySales?.filter((dailySale: DailySale) =>
-        dailySale.item.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    // 🔥 FILTER + SORT
+    const filteredDailySales = dailySales
+        ?.filter((sale: DailySale) =>
+            sale.item.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+        ?.filter((sale: DailySale) =>
+            selectedDate ? sale.saleDate === selectedDate : true
+        )
+        ?.sort(
+            (a: DailySale, b: DailySale) =>
+                new Date(b.saleDate).getTime() -
+                new Date(a.saleDate).getTime()
+        );
 
-    const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    // 🔥 AUTO FORMULAS
+    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setCurrentDailySale((prev) => ({
-            ...prev,
-            [name]: name === "openingStock" || name === "quantitySold" || name === "pricePerUnit" || name === "totalPrice" ? parseFloat(value) : value,
-        }));
+
+        const numericFields = ["openingStock", "quantitySold", "pricePerUnit"];
+        const updatedValue = numericFields.includes(name)
+            ? parseFloat(value) || 0
+            : value;
+
+        setCurrentDailySale((prev) => {
+            const updated = { ...prev, [name]: updatedValue };
+
+            // Amafaranga
+            updated.totalPrice =
+                updated.quantitySold * updated.pricePerUnit;
+
+            // Ibyasigaye
+            updated.remainingStock =
+                updated.openingStock - updated.quantitySold;
+
+            return updated;
+        });
     };
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        try {
-            if (modalMode === "create") {
-                await createDailySale({
-                    ...currentDailySale,
-                    userId: sessionData?.user?.id,
-                }).unwrap();
-            } else if (currentDailySale.id) {
-                const updateData: DailySaleUpdateData = {
-                    id: currentDailySale.id,
-                    data: { ...currentDailySale },
-                };
-                await updateDailySale(updateData).unwrap();
-            }
 
-            setIsModalOpen(false);
-            resetForm();
-            refetch();
-        } catch (error: unknown) {
-            if (error && typeof error === 'object' && 'message' in error) {
-                const err = error as { message?: string; data?: { message?: string } };
-                alert(`Error saving daily sale: ${err.data?.message || err.message}`);
-            } else {
-                alert('An unknown error occurred while saving daily sale.');
-            }
+        if (modalMode === "create") {
+            await createDailySale({
+                ...currentDailySale,
+                userId: sessionData?.user?.id,
+            }).unwrap();
+        } else if (currentDailySale.id) {
+            const updateData: DailySaleUpdateData = {
+                id: currentDailySale.id,
+                data: { ...currentDailySale },
+            };
+            await updateDailySale(updateData).unwrap();
         }
+
+        setIsModalOpen(false);
+        resetForm();
+        refetch();
     };
 
     const handleDelete = async (id: string) => {
-        if (confirm("Are you sure you want to delete this daily sale?")) {
-            try {
-                await deleteDailySale(id).unwrap();
-                refetch();
-            } catch (error: unknown) {
-                if (error && typeof error === 'object' && 'data' in error) {
-                    const err = error as FetchBaseQueryError & { data?: { message?: string } };
-                    alert(`Error deleting daily sale: ${err.data?.message || 'An error occurred'}`);
-                } else {
-                    alert('An unknown error occurred while deleting daily sale.');
-                }
-            }
+        if (confirm("Are you sure?")) {
+            await deleteDailySale(id).unwrap();
+            refetch();
         }
     };
 
-    const handleEdit = (dailySale: DailySale) => {
-        setCurrentDailySale(dailySale);
+    const handleEdit = (sale: DailySale) => {
+        setCurrentDailySale(sale);
         setModalMode("edit");
         setIsModalOpen(true);
     };
@@ -112,75 +129,182 @@ const DailySalesManagement: React.FC = () => {
             quantitySold: 0,
             pricePerUnit: 0,
             totalPrice: 0,
+            remainingStock: 0,
+            saleDate: "",
         });
     };
 
-    useEffect(() => {
-        if (isError) {
-            if ("data" in error) {
-                const errorMessage = (error.data as { message?: string })?.message || "Unknown error";
-                alert(`Error fetching daily sales: ${errorMessage}`);
-            } else {
-                alert("Unknown error occurred");
-            }
+    // 🔥 TOTAL SALES
+    const totalSalesAmount = filteredDailySales.reduce(
+        (sum: number, sale: DailySale) => sum + sale.totalPrice,
+        0
+    );
+
+    // 🔥 EXPORT CSV
+    const exportToCSV = () => {
+        if (!filteredDailySales.length) {
+            alert("No data to export.");
+            return;
         }
-    }, [isError, error]);
+
+        const headers = [
+            "Date",
+            "Item",
+            "Opening Stock",
+            "Quantity Sold",
+            "Price Per Unit",
+            "Total Price",
+            "Remaining Stock",
+        ];
+
+        const rows = filteredDailySales.map((sale: DailySale) => [
+            sale.saleDate,
+            sale.item,
+            sale.openingStock,
+            sale.quantitySold,
+            sale.pricePerUnit,
+            sale.totalPrice,
+            sale.remainingStock,
+        ]);
+
+        const csvContent =
+            "data:text/csv;charset=utf-8," +
+            [headers, ...rows].map((e) => e.join(",")).join("\n");
+
+        const link = document.createElement("a");
+        link.href = encodeURI(csvContent);
+        link.download = `Daily_Sales_${selectedDate || "All"}.csv`;
+        document.body.appendChild(link);
+        link.click();
+    };
 
     return (
         <div className="container mx-auto px-4 py-8">
-            <h1 className="text-2xl font-bold mb-4">Daily Sales Management</h1>
+            <h1 className="text-2xl font-bold mb-4">
+                IFISHI Y’IGURISHWA RYA BURI MUNSI
+            </h1>
 
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex gap-4 mb-4 flex-wrap">
                 <input
                     type="text"
-                    placeholder="Search daily sales..."
+                    placeholder="Search item..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="border px-4 py-2 rounded w-1/2"
+                    className="border px-3 py-2 rounded"
                 />
+
+                <input
+                    type="date"
+                    value={selectedDate}
+                    onChange={(e) => setSelectedDate(e.target.value)}
+                    className="border px-3 py-2 rounded"
+                />
+
                 <button
-                    className="bg-green-500 text-white px-4 py-2 rounded"
                     onClick={() => {
                         setModalMode("create");
                         setIsModalOpen(true);
                         resetForm();
                     }}
+                    className="bg-green-600 text-white px-4 py-2 rounded"
                 >
-                    Add Daily Sale
+                    Add Sale
+                </button>
+
+                <button
+                    onClick={exportToCSV}
+                    className="bg-blue-600 text-white px-4 py-2 rounded"
+                >
+                    Export CSV
                 </button>
             </div>
 
             {isLoading ? (
                 <p>Loading...</p>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {filteredDailySales.map((dailySale: DailySale) => (
-                        <div key={dailySale.id} className="border rounded p-4 shadow">
-                            <h2 className="text-xl font-semibold mb-1">{dailySale.item}</h2>
-                            <p className="text-gray-600 mb-2">Opening Stock: {dailySale.openingStock}</p>
-                            <p className="text-gray-600 mb-2">Quantity Sold: {dailySale.quantitySold}</p>
-                            <p className="text-gray-600 mb-2">Price per Unit: RWF {dailySale.pricePerUnit.toFixed(2)}</p>
-                            <p className="text-gray-600 mb-4">Total Price: RWF {dailySale.totalPrice.toFixed(2)}</p>
-                            <div className="flex gap-2">
-                                <button className="bg-blue-500 text-white px-3 py-1 rounded" onClick={() => handleEdit(dailySale)}>
-                                    Edit
-                                </button>
-                                <button className="bg-red-500 text-white px-3 py-1 rounded" onClick={() => handleDelete(dailySale.id!)}>
-                                    Delete
-                                </button>
-                            </div>
-                        </div>
-                    ))}
+                <div className="overflow-x-auto">
+                    <table className="min-w-full border border-gray-300">
+                        <thead className="bg-gray-200">
+                            <tr>
+                                <th className="border px-4 py-2">No</th>
+                                <th className="border px-4 py-2">Italiki</th>
+                                <th className="border px-4 py-2">Ibicuruzwa</th>
+                                <th className="border px-4 py-2">Opening</th>
+                                <th className="border px-4 py-2">Ibyagurishijwe(kg,pcs)</th>
+                                <th className="border px-4 py-2">P/unit</th>
+                                <th className="border px-4 py-2">Total</th>
+                                <th className="border px-4 py-2">Ibyasigaye</th>
+                                <th className="border px-4 py-2">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {filteredDailySales.map((sale: DailySale, index: number) => (
+                                <tr key={sale.id} className="text-center">
+                                    <td className="border px-4 py-2">{index + 1}</td>
+                                    <td className="border px-4 py-2">{sale.saleDate}</td>
+                                    <td className="border px-4 py-2">{sale.item}</td>
+                                    <td className="border px-4 py-2">{sale.openingStock}</td>
+                                    <td className="border px-4 py-2">{sale.quantitySold}</td>
+                                    <td className="border px-4 py-2">
+                                        {sale.pricePerUnit}
+                                    </td>
+                                    <td className="border px-4 py-2">
+                                        {sale.totalPrice}
+                                    </td>
+                                    <td className="border px-4 py-2 font-bold text-green-600">
+                                        {sale.remainingStock}
+                                    </td>
+                                    <td className="border px-4 py-2">
+                                        <button
+                                            onClick={() => handleEdit(sale)}
+                                            className="bg-blue-500 text-white px-2 py-1 rounded mr-2"
+                                        >
+                                            Edit
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(sale.id!)}
+                                            className="bg-red-500 text-white px-2 py-1 rounded"
+                                        >
+                                            Delete
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+
+                        <tfoot>
+                            <tr className="bg-gray-100 font-bold">
+                                <td colSpan={6} className="border px-4 py-2 text-right">
+                                    Amafaranga y'Ibyagurishijwe byose:
+                                </td>
+                                <td className="border px-4 py-2">
+                                    {totalSalesAmount}
+                                </td>
+                                <td colSpan={2}></td>
+                            </tr>
+                        </tfoot>
+                    </table>
                 </div>
             )}
 
+            {/* MODAL */}
             {isModalOpen && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white p-6 rounded shadow w-96">
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                    <div className="bg-white p-6 rounded w-96">
                         <h2 className="text-xl font-bold mb-4">
-                            {modalMode === "create" ? "Add New Daily Sale" : "Edit Daily Sale"}
+                            {modalMode === "create" ? "Add Sale" : "Edit Sale"}
                         </h2>
+
                         <form onSubmit={handleSubmit}>
+                            <input
+                                type="date"
+                                name="saleDate"
+                                value={currentDailySale.saleDate}
+                                onChange={handleInputChange}
+                                className="border w-full mb-2 px-3 py-2 rounded"
+                                required
+                            />
+
                             <input
                                 type="text"
                                 name="item"
@@ -190,6 +314,7 @@ const DailySalesManagement: React.FC = () => {
                                 className="border w-full mb-2 px-3 py-2 rounded"
                                 required
                             />
+
                             <input
                                 type="number"
                                 name="openingStock"
@@ -199,6 +324,7 @@ const DailySalesManagement: React.FC = () => {
                                 className="border w-full mb-2 px-3 py-2 rounded"
                                 required
                             />
+
                             <input
                                 type="number"
                                 name="quantitySold"
@@ -208,24 +334,33 @@ const DailySalesManagement: React.FC = () => {
                                 className="border w-full mb-2 px-3 py-2 rounded"
                                 required
                             />
+
                             <input
                                 type="number"
                                 name="pricePerUnit"
-                                placeholder="Price per Unit"
+                                placeholder="Price Per Unit"
                                 value={currentDailySale.pricePerUnit}
                                 onChange={handleInputChange}
                                 className="border w-full mb-2 px-3 py-2 rounded"
                                 required
                             />
+
                             <input
                                 type="number"
-                                name="totalPrice"
-                                placeholder="Total Price"
                                 value={currentDailySale.totalPrice}
-                                onChange={handleInputChange}
-                                className="border w-full mb-4 px-3 py-2 rounded"
-                                required
+                                readOnly
+                                className="border w-full mb-2 px-3 py-2 rounded bg-gray-100"
+                                placeholder="Total"
                             />
+
+                            <input
+                                type="number"
+                                value={currentDailySale.remainingStock}
+                                readOnly
+                                className="border w-full mb-4 px-3 py-2 rounded bg-gray-100"
+                                placeholder="Remaining"
+                            />
+
                             <div className="flex justify-end gap-2">
                                 <button
                                     type="button"
@@ -234,8 +369,11 @@ const DailySalesManagement: React.FC = () => {
                                 >
                                     Cancel
                                 </button>
-                                <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded">
-                                    {modalMode === "create" ? "Add" : "Update"}
+                                <button
+                                    type="submit"
+                                    className="bg-green-600 text-white px-4 py-2 rounded"
+                                >
+                                    Save
                                 </button>
                             </div>
                         </form>

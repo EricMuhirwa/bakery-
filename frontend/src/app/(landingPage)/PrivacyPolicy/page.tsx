@@ -10,7 +10,7 @@ const PrivacyPolicy: React.FC = () => {
       </h1>
 
       <p className="mb-6 text-gray-700 text-lg leading-relaxed">
-        At Uruyange Coffee, we respect your privacy and are committed to
+        At CEBK bakery Ltd, we respect your privacy and are committed to
         protecting your personal information. This policy outlines how we
         collect, use, and safeguard your data when you interact with our
         website or services.

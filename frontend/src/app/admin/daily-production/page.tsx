@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
-import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
+import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { useSession } from "next-auth/react";
 import {
     useDailyProductionsQuery,
@@ -28,28 +28,45 @@ const DailyProductionManagement: React.FC = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalMode, setModalMode] = useState<"create" | "edit">("create");
     const [searchTerm, setSearchTerm] = useState("");
-    const [currentDailyProduction, setCurrentDailyProduction] = useState<DailyProduction>({
-        item: "",
-        quantityProduced: 0,
-        timeProduced: "",
-        remark: "",
-    });
+    const [currentDailyProduction, setCurrentDailyProduction] =
+        useState<DailyProduction>({
+            item: "",
+            quantityProduced: 0,
+            timeProduced: "",
+            remark: "",
+        });
 
-    const { data: dailyProductions = [], isLoading, refetch, isError, error } = useDailyProductionsQuery({});
+    const {
+        data: dailyProductions = [],
+        isLoading,
+        refetch,
+        isError,
+        error,
+    } = useDailyProductionsQuery({});
+
     const [createDailyProduction] = useCreateDailyProductionMutation();
     const [updateDailyProduction] = useUpdateDailyProductionMutation();
     const [deleteDailyProduction] = useDeleteDailyProductionMutation();
 
-    const filteredDailyProductions = dailyProductions?.filter((dailyProduction: DailyProduction) =>
-        dailyProduction.item.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (dailyProduction.remark && dailyProduction.remark.toLowerCase().includes(searchTerm.toLowerCase()))
+    const filteredDailyProductions = dailyProductions?.filter(
+        (dailyProduction: DailyProduction) =>
+            dailyProduction.item
+                .toLowerCase()
+                .includes(searchTerm.toLowerCase()) ||
+            (dailyProduction.remark &&
+                dailyProduction.remark
+                    .toLowerCase()
+                    .includes(searchTerm.toLowerCase()))
     );
 
-    const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleInputChange = (
+        e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
         const { name, value } = e.target;
         setCurrentDailyProduction((prev) => ({
             ...prev,
-            [name]: name === "quantityProduced" ? parseInt(value) : value,
+            [name]:
+                name === "quantityProduced" ? parseInt(value) || 0 : value,
         }));
     };
 
@@ -73,11 +90,20 @@ const DailyProductionManagement: React.FC = () => {
             resetForm();
             refetch();
         } catch (error: unknown) {
-            if (error && typeof error === 'object' && 'message' in error) {
-                const err = error as { message?: string; data?: { message?: string } };
-                alert(`Error saving daily production: ${err.data?.message || err.message}`);
+            if (error && typeof error === "object" && "message" in error) {
+                const err = error as {
+                    message?: string;
+                    data?: { message?: string };
+                };
+                alert(
+                    `Error saving daily production: ${
+                        err.data?.message || err.message
+                    }`
+                );
             } else {
-                alert('An unknown error occurred while saving daily production.');
+                alert(
+                    "An unknown error occurred while saving daily production."
+                );
             }
         }
     };
@@ -88,11 +114,19 @@ const DailyProductionManagement: React.FC = () => {
                 await deleteDailyProduction(id).unwrap();
                 refetch();
             } catch (error: unknown) {
-                if (error && typeof error === 'object' && 'data' in error) {
-                    const err = error as FetchBaseQueryError & { data?: { message?: string } };
-                    alert(`Error deleting daily production: ${err.data?.message || 'An error occurred'}`);
+                if (error && typeof error === "object" && "data" in error) {
+                    const err = error as FetchBaseQueryError & {
+                        data?: { message?: string };
+                    };
+                    alert(
+                        `Error deleting daily production: ${
+                            err.data?.message || "An error occurred"
+                        }`
+                    );
                 } else {
-                    alert('An unknown error occurred while deleting daily production.');
+                    alert(
+                        "An unknown error occurred while deleting daily production."
+                    );
                 }
             }
         }
@@ -116,7 +150,9 @@ const DailyProductionManagement: React.FC = () => {
     useEffect(() => {
         if (isError) {
             if ("data" in error) {
-                const errorMessage = (error.data as { message?: string })?.message || "Unknown error";
+                const errorMessage =
+                    (error.data as { message?: string })?.message ||
+                    "Unknown error";
                 alert(`Error fetching daily productions: ${errorMessage}`);
             } else {
                 alert("Unknown error occurred");
@@ -125,19 +161,21 @@ const DailyProductionManagement: React.FC = () => {
     }, [isError, error]);
 
     return (
-        <div className="container mx-auto px-4 py-8">
-            <h1 className="text-2xl font-bold mb-4">Daily Production Management</h1>
+        <div className="container mx-auto px-6 py-8">
+            <h1 className="text-3xl font-extrabold mb-6">
+                IFISHI Y’IBYAKOZWE (Daily Production)
+            </h1>
 
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex flex-col sm:flex-row justify-between mb-6 gap-4">
                 <input
                     type="text"
                     placeholder="Search daily productions..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="border px-4 py-2 rounded w-1/2"
+                    className="border border-gray-300 px-4 py-2 rounded shadow-sm w-full sm:w-1/2 focus:outline-none focus:ring-2 focus:ring-green-400"
                 />
                 <button
-                    className="bg-green-500 text-white px-4 py-2 rounded"
+                    className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded shadow-sm transition"
                     onClick={() => {
                         setModalMode("create");
                         setIsModalOpen(true);
@@ -151,58 +189,126 @@ const DailyProductionManagement: React.FC = () => {
             {isLoading ? (
                 <p>Loading...</p>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {filteredDailyProductions.map((dailyProduction: DailyProduction) => (
-                        <div key={dailyProduction.id} className="border rounded p-4 shadow">
-                            <h2 className="text-xl font-semibold mb-1">{dailyProduction.item}</h2>
-                            <p className="text-gray-600 mb-2">Quantity Produced: {dailyProduction.quantityProduced}</p>
-                            <p className="text-gray-600 mb-2">Time Produced: {new Date(dailyProduction.timeProduced).toLocaleString()}</p>
-                            <p className="text-gray-600 mb-4">Remark: {dailyProduction.remark || "N/A"}</p>
-                            <div className="flex gap-2">
-                                <button className="bg-blue-500 text-white px-3 py-1 rounded" onClick={() => handleEdit(dailyProduction)}>
-                                    Edit
-                                </button>
-                                <button className="bg-red-500 text-white px-3 py-1 rounded" onClick={() => handleDelete(dailyProduction.id!)}>
-                                    Delete
-                                </button>
-                            </div>
-                        </div>
-                    ))}
+                <div className="overflow-x-auto shadow-md rounded-lg border border-gray-200">
+                    <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="bg-gray-100">
+                            <tr>
+                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200">
+                                    Item
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200">
+                                    Quantity
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200">
+                                    Time Produced
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200">
+                                    Remark
+                                </th>
+                                <th className="px-6 py-3 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                            {filteredDailyProductions.length > 0 ? (
+                                filteredDailyProductions.map(
+                                    (dailyProduction: DailyProduction) => (
+                                        <tr
+                                            key={dailyProduction.id}
+                                            className="hover:bg-gray-200"
+                                        >
+                                            <td className="px-6 py-4 whitespace-nowrap border-r border-gray-200">
+                                                {dailyProduction.item}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap border-r border-gray-200">
+                                                {dailyProduction.quantityProduced}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap border-r border-gray-200">
+                                                {new Date(
+                                                    dailyProduction.timeProduced
+                                                ).toLocaleString()}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap border-r border-gray-200">
+                                                {dailyProduction.remark || "N/A"}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-center">
+                                                <div className="flex justify-center gap-2">
+                                                    <button
+                                                        className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded transition"
+                                                        onClick={() =>
+                                                            handleEdit(
+                                                                dailyProduction
+                                                            )
+                                                        }
+                                                    >
+                                                        Edit
+                                                    </button>
+                                                    <button
+                                                        className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded transition"
+                                                        onClick={() =>
+                                                            handleDelete(
+                                                                dailyProduction.id!
+                                                            )
+                                                        }
+                                                    >
+                                                        Delete
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    )
+                                )
+                            ) : (
+                                <tr>
+                                    <td
+                                        colSpan={5}
+                                        className="text-center py-6 text-gray-500"
+                                    >
+                                        No daily productions found.
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
                 </div>
             )}
 
             {isModalOpen && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white p-6 rounded shadow w-96">
-                        <h2 className="text-xl font-bold mb-4">
-                            {modalMode === "create" ? "Add New Daily Production" : "Edit Daily Production"}
+                <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+                    <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+                        <h2 className="text-2xl font-bold mb-5 text-center">
+                            {modalMode === "create"
+                                ? "Add New Daily Production"
+                                : "Edit Daily Production"}
                         </h2>
-                        <form onSubmit={handleSubmit}>
+                        <form onSubmit={handleSubmit} className="space-y-4">
                             <input
                                 type="text"
                                 name="item"
                                 placeholder="Item"
                                 value={currentDailyProduction.item}
                                 onChange={handleInputChange}
-                                className="border w-full mb-2 px-3 py-2 rounded"
+                                className="border border-gray-300 w-full px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-green-400"
                                 required
                             />
                             <input
                                 type="number"
                                 name="quantityProduced"
                                 placeholder="Quantity Produced"
-                                value={currentDailyProduction.quantityProduced}
+                                value={
+                                    currentDailyProduction.quantityProduced
+                                }
                                 onChange={handleInputChange}
-                                className="border w-full mb-2 px-3 py-2 rounded"
+                                className="border border-gray-300 w-full px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-green-400"
                                 required
                             />
                             <input
                                 type="datetime-local"
                                 name="timeProduced"
-                                placeholder="Time Produced"
                                 value={currentDailyProduction.timeProduced}
                                 onChange={handleInputChange}
-                                className="border w-full mb-2 px-3 py-2 rounded"
+                                className="border border-gray-300 w-full px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-green-400"
                                 required
                             />
                             <textarea
@@ -210,17 +316,20 @@ const DailyProductionManagement: React.FC = () => {
                                 placeholder="Remark"
                                 value={currentDailyProduction.remark}
                                 onChange={handleInputChange}
-                                className="border w-full mb-4 px-3 py-2 rounded"
+                                className="border border-gray-300 w-full px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-green-400 resize-none"
                             />
-                            <div className="flex justify-end gap-2">
+                            <div className="flex justify-end gap-3">
                                 <button
                                     type="button"
                                     onClick={() => setIsModalOpen(false)}
-                                    className="bg-gray-400 text-white px-4 py-2 rounded"
+                                    className="bg-gray-400 hover:bg-gray-500 text-white px-5 py-2 rounded transition"
                                 >
                                     Cancel
                                 </button>
-                                <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded">
+                                <button
+                                    type="submit"
+                                    className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded transition"
+                                >
                                     {modalMode === "create" ? "Add" : "Update"}
                                 </button>
                             </div>

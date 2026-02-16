@@ -82,7 +82,7 @@ const AdminHome = () => {
             <div className='flex flex-row items-center gap-[20px] justify-between w-full p-4'>
                 <div className='flex flex-col gap-[4px]'>
                     <h1 className='text-[24px] font-bold'>Welcome Back {userProfile?.user?.name}</h1>
-                    <span className='text-[14px] text-[#475367]'>Build Your world of Ineza Coffee Experience Here😉!!!</span>
+                    <span className='text-[14px] text-[#475367]'>Build Your world of bakery management Coffee Experience Here😉!!!</span>
                 </div>
             </div>
             <div className='flex flex-col gap-[10px] px-4'>

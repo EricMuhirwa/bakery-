@@ -8,9 +8,9 @@ const Press: React.FC = () => {
       <h1 className="text-4xl font-bold text-amber-900 mb-8 text-center">Press</h1>
       <div className="mb-6 text-gray-700">
         <p>
-          Uruyange Coffee has been featured in a variety of media outlets for our commitment to quality,
+          CEBK Bakery Ltd has been featured in a variety of media outlets for our commitment to quality,
           sustainability, and community. For press inquiries or media kits, please contact
-          <a className="text-amber-800 underline" href="mailto:press@uruyangecoffee.com"> press@uruyangecoffee.com</a>.
+          <a className="text-amber-800 underline" href="mailto:press@uruyangecoffee.com"> press@cebkltd.com</a>.
         </p>
       </div>
       <div className="mb-6 text-gray-700">

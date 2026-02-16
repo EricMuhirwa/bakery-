@@ -6,6 +6,7 @@ import { Provider } from "react-redux";
 import { store } from "@/lib/redux/store";
 import { Toaster } from "sonner";
 import Head from "next/head";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,9 +16,9 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en">
+        <html lang="en" suppressHydrationWarning>
             <Head>
-                <title>Bakery Ineza</title>
+                <title>Bakery CEBK Ltd</title>
                 <meta name="description" content="Umurava Platform" />
                 <link rel="icon" href="/umurava.ico" />
                 <link rel="apple-touch-icon" href="/umurava.png" />
@@ -25,8 +26,15 @@ export default function RootLayout({
             <body className={`${inter.className} antialiased min-h-screen flex flex-col`}>
                 <SessionProvider>
                     <Provider store={store}>
-                        <Toaster position={`top-right`} />
-                        <main className="flex-grow">{children}</main>
+                        <ThemeProvider
+                            attribute="class"
+                            defaultTheme="light"
+                            enableSystem
+                            disableTransitionOnChange
+                        >
+                            <Toaster position={`top-right`} />
+                            <main className="flex-grow">{children}</main>
+                        </ThemeProvider>
                     </Provider>
                 </SessionProvider>
             </body>

@@ -167,7 +167,7 @@ const ContactPage = () => {
                                     </div>
                                     <div>
                                         <h3 className="font-bold text-gray-700">Location</h3>
-                                        <p className="text-gray-600 mt-1">Bugesera, Rwanda</p>
+                                        <p className="text-gray-600 mt-1">Gare ya Masaka, Kigali-Rwanda</p>
                                     </div>
                                 </div>
 
@@ -178,7 +178,7 @@ const ContactPage = () => {
                                     <div>
                                         <h3 className="font-bold text-gray-700">Email</h3>
                                         <a href="mailto:marcellinabimana@gmail.com" className="text-blue-600 hover:underline mt-1">
-                                        inezabakery@gmail.com
+                                        kabanzima1@gmail.com
                                         </a>
                                     </div>
                                 </div>
@@ -190,7 +190,7 @@ const ContactPage = () => {
                                     <div>
                                         <h3 className="font-bold text-gray-700">Phone</h3>
                                         <a href="tel:+48452037323" className="text-blue-600 hover:underline mt-1">
-                                        +250 788 563 705
+                                        +250 788 421 263
                                         </a>
                                     </div>
                                 </div>

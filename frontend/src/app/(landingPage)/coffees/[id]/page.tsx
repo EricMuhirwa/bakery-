@@ -10,6 +10,7 @@ import { toast } from "sonner";
 
 interface CoffeePageProps {
   params: Promise<{ id: string }>;
+
 }
 
 
@@ -29,7 +30,7 @@ const CoffeePage: React.FC<CoffeePageProps> = ({ params: paramsPromise }) => {
   if (isLoading) {
     return (
       <div className="h-screen flex items-center justify-center pt-32">
-        <div className="animate-pulse text-xl">Loading coffee details...</div>
+        <div className="animate-pulse text-xl">Loading product details...</div>
       </div>
     );
   }
@@ -38,13 +39,13 @@ const CoffeePage: React.FC<CoffeePageProps> = ({ params: paramsPromise }) => {
     return (
       <div className="h-screen flex items-center justify-center pt-32">
         <div className="text-red-500 text-xl">
-          Sorry, we couldn&rsquo;t find this coffee.
+          Sorry, we couldn&rsquo;t find this product.
           <div className="mt-4">
             <Link
               href="/coffees"
               className="bg-black text-white py-2 px-4 rounded-lg"
             >
-              Back to coffees
+              Back to products
             </Link>
           </div>
         </div>
@@ -114,7 +115,7 @@ const CoffeePage: React.FC<CoffeePageProps> = ({ params: paramsPromise }) => {
           </Link>{" "}
           /{" "}
           <Link href="/coffees" className="text-gray-500 hover:text-black">
-            Coffees
+            Products
           </Link>{" "}
           / <span className="text-gray-900 font-medium">{coffee.title}</span>
         </div>
@@ -154,7 +155,7 @@ const CoffeePage: React.FC<CoffeePageProps> = ({ params: paramsPromise }) => {
                   <span className="ml-2 text-gray-600">(42 reviews)</span>
                 </div>
                 <p className="text-2xl font-bold text-gray-900 mb-6">
-                  ${(coffee.price * quantity).toFixed(2)}
+                  RWF {(coffee.price * quantity).toFixed(2)}
                 </p>
 
                 <div className="prose prose-sm text-gray-600 mb-8">
@@ -166,9 +167,7 @@ const CoffeePage: React.FC<CoffeePageProps> = ({ params: paramsPromise }) => {
                       } that will delight your senses.`}
                   </p>
                   <p>
-                    Sourced from sustainable farms and roasted to perfection,
-                    our coffee beans guarantee a fresh and flavorful cup every
-                    time. Perfect for{" "}
+                  If thou tastest a crust of bread, thou tastest all the stars and all the heavens{" "}
                     {coffee.title.includes("Espresso")
                       ? "a morning energy boost"
                       : "a relaxing afternoon break"}.
@@ -269,7 +268,7 @@ const CoffeePage: React.FC<CoffeePageProps> = ({ params: paramsPromise }) => {
                         d="M5 13l4 4L19 7"
                       />
                     </svg>
-                    <span>Free shipping on orders over $50</span>
+                    <span>Free shipping on orders over RWF 45000</span>
                   </div>
                   <div className="flex items-center space-x-2 text-sm text-gray-600">
                     <svg

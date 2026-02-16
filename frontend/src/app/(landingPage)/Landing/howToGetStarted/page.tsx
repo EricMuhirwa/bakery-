@@ -4,7 +4,7 @@ import Image from 'next/image';
 const steps = [
     {
         number: 1,
-        title: 'Sign up on Ineza Bakery',
+        title: 'Sign up on CEBK Bakery Ltd',
         description: 'Start enjoy The Subscription Service',
         image: '/images/ch1.JPG'
     },

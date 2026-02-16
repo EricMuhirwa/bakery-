@@ -167,7 +167,7 @@ const CoffeeManagement: React.FC = () => {
 
     return (
         <div className="container mx-auto px-4 py-8">
-            <h1 className="text-2xl font-bold mb-4">Bakery Management</h1>
+            <h1 className="text-2xl font-bold mb-4">CEBK Products and Prices</h1>
 
             <div className="flex items-center justify-between mb-4">
                 <input
@@ -198,7 +198,7 @@ const CoffeeManagement: React.FC = () => {
                             <Image
                                 src={coffee.image}
                                 alt={coffee.title}
-                                width={200}
+                                width={100}
                                 height={150}
                                 className="w-full h-40 object-cover rounded mb-2"
                                 unoptimized // Add this if you're using external domains not configured in next.config.js
@@ -223,7 +223,7 @@ const CoffeeManagement: React.FC = () => {
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                     <div className="bg-white p-6 rounded shadow w-96">
                         <h2 className="text-xl font-bold mb-4">
-                            {modalMode === "create" ? "Add New Coffee" : "Edit Coffee"}
+                            {modalMode === "create" ? "Add New item" : "Edit item"}
                         </h2>
                         <form onSubmit={handleSubmit}>
                             <input

@@ -11,7 +11,6 @@ interface UserProfile {
     role: string;
 }
 
-
 export default function RootLayout({
     children,
 }: Readonly<{ children: React.ReactNode }>) {

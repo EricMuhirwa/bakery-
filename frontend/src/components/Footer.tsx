@@ -55,7 +55,7 @@ export default function Footer() {
 
       {/* Footer Bottom Section */}
       <div className="text-gray-300 space-y-2 text-center">
-        <p>We&rsquo;re located in The Bugesera  — a historic MMM</p>
+        <p>We&rsquo;re located in The Gare Masaka  — a historic MMM</p>
         <p>neighborhood with a rich history of black entrepreneurs</p>
         <p>and culture. We&rsquo;re honored to have you as a partner</p>
         <p>in this journey to revitalize black and brown entrepreneurship.</p>
@@ -82,7 +82,7 @@ export default function Footer() {
           </Link>
         </div>
         <div>
-          <p className="text-gray-300">© 2026 Bakery Ineza</p>
+          <p className="text-gray-300">© 2026 CEBK bakery Ltd</p>
         </div>
       </div>
     </footer>

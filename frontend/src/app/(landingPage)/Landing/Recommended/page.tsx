@@ -19,11 +19,11 @@ const Recommended: React.FC = () => {
   const displayedCoffees: Coffee[] = coffees?.slice(0, 4) || [];
 
   if (isLoading) {
-    return <div className="text-center py-12">Loading coffees...</div>;
+    return <div className="text-center py-12">Loading product...</div>;
   }
 
   if (isError) {
-    return <div className="text-center py-12 text-red-500">Error loading coffees.</div>;
+    return <div className="text-center py-12 text-red-500">Error loading product.</div>;
   }
 
   return (
