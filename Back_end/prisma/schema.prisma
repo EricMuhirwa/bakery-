@@ -163,6 +163,7 @@ model StockMovement {
 model RawMaterial {
   id           String    @id @default(auto()) @map("_id") @db.ObjectId
   itemName     String
+  unit         String?
   quantity     Float
   pricePerUnit Float
   totalPrice   Float

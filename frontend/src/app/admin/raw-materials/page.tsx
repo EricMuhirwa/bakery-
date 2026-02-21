@@ -143,6 +143,7 @@ const RawMaterialManagement: React.FC = () => {
               <th className="px-4 py-3 border">Ingano yaguzwe</th>
               <th className="px-4 py-3 border">Igiciro/unit</th>
               <th className="px-4 py-3 border">Igiciro cyose</th>
+              <th className="px-4 py-3 border">Uwaguzwe (Purchased by)</th>
               <th className="px-4 py-3 border">Itariki</th>
               <th className="px-4 py-3 border">Actions</th>
             </tr>
@@ -151,7 +152,7 @@ const RawMaterialManagement: React.FC = () => {
           <tbody>
             {filteredRawMaterials.length === 0 && (
               <tr>
-                <td colSpan={8} className="text-center py-6 text-gray-500">
+                <td colSpan={9} className="text-center py-6 text-gray-500">
                   No data available
                 </td>
               </tr>
@@ -177,6 +178,7 @@ const RawMaterialManagement: React.FC = () => {
                 <td className="px-4 py-3 border font-semibold">
                   {item.totalPrice}
                 </td>
+                <td className="px-4 py-3 border">{item.purchasedBy || "-"}</td>
                 <td className="px-4 py-3 border">
                   {item.date
                     ? new Date(item.date).toLocaleDateString()
@@ -220,6 +222,16 @@ const RawMaterialManagement: React.FC = () => {
                 name="itemName"
                 placeholder="Izina ry’igicuruzwa"
                 value={currentRawMaterial.itemName}
+                onChange={handleInputChange}
+                className="border w-full mb-2 px-3 py-2 rounded"
+                required
+              />
+
+              <input
+                type="text"
+                name="purchasedBy"
+                placeholder="Uwaguzwe (Purchased by)"
+                value={currentRawMaterial.purchasedBy}
                 onChange={handleInputChange}
                 className="border w-full mb-2 px-3 py-2 rounded"
                 required

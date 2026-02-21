@@ -3,10 +3,17 @@ import { prisma as prismaClient } from '../config/database';
 
 const rawMaterialService = {
     createRawMaterial: async (rawMaterialData: any): Promise<ReturnType<typeof RawMaterialDTO.getRawMaterialDTO>> => {
+        const sanitized = RawMaterialDTO.sanitizeCreateData(rawMaterialData) as Record<string, any>;
         const rawMaterial = await prismaClient.rawMaterial.create({ 
             data: {
-                ...rawMaterialData,
+                itemName: sanitized.itemName,
+                unit: sanitized.unit ?? undefined,
+                quantity: sanitized.quantity,
+                pricePerUnit: sanitized.pricePerUnit,
+                totalPrice: sanitized.totalPrice,
                 date: new Date(rawMaterialData.date),
+                purchasedBy: sanitized.purchasedBy ?? '',
+                userId: sanitized.userId ?? undefined,
             }
         });
         return RawMaterialDTO.getRawMaterialDTO(rawMaterial);
@@ -31,7 +38,7 @@ const rawMaterialService = {
     },
 
     updateRawMaterial: async (id: string, rawMaterialData: any): Promise<ReturnType<typeof RawMaterialDTO.getRawMaterialDTO>> => {
-        const updateData: any = { ...rawMaterialData };
+        const updateData: any = RawMaterialDTO.sanitizeUpdateData(rawMaterialData);
         if (rawMaterialData.date) {
             updateData.date = new Date(rawMaterialData.date);
         }
