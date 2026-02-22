@@ -48,7 +48,8 @@ const DailyProductionManagement: React.FC = () => {
     const [updateDailyProduction] = useUpdateDailyProductionMutation();
     const [deleteDailyProduction] = useDeleteDailyProductionMutation();
 
-    const filteredDailyProductions = dailyProductions?.filter(
+    const dailyProductionsArray = Array.isArray(dailyProductions) ? dailyProductions : [];
+    const filteredDailyProductions = dailyProductionsArray.filter(
         (dailyProduction: DailyProduction) =>
             dailyProduction.item
                 .toLowerCase()
@@ -96,8 +97,7 @@ const DailyProductionManagement: React.FC = () => {
                     data?: { message?: string };
                 };
                 alert(
-                    `Error saving daily production: ${
-                        err.data?.message || err.message
+                    `Error saving daily production: ${err.data?.message || err.message
                     }`
                 );
             } else {
@@ -119,8 +119,7 @@ const DailyProductionManagement: React.FC = () => {
                         data?: { message?: string };
                     };
                     alert(
-                        `Error deleting daily production: ${
-                            err.data?.message || "An error occurred"
+                        `Error deleting daily production: ${err.data?.message || "An error occurred"
                         }`
                     );
                 } else {

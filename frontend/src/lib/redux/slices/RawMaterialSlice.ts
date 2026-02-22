@@ -5,6 +5,7 @@ const rawMaterialApi = apiSlice.injectEndpoints({
         // Fetch all raw materials
         rawMaterials: builder.query({
             query: () => ({ url: "/raw-materials" }),
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             transformResponse: (response: { success: boolean; data: any[] } | any[]) => {
                 return Array.isArray(response) ? response : (response?.success ? response.data : response);
             },
@@ -13,6 +14,7 @@ const rawMaterialApi = apiSlice.injectEndpoints({
         // Fetch a single raw material by ID
         singleRawMaterial: builder.query({
             query: (id) => ({ url: `/raw-materials/${id}` }),
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             transformResponse: (response: { success: boolean; data: any } | any) => {
                 return response?.success ? response.data : response;
             },
@@ -25,6 +27,7 @@ const rawMaterialApi = apiSlice.injectEndpoints({
                 method: "POST",
                 body: data,
             }),
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             transformResponse: (response: { success: boolean; data: any } | any) => {
                 return response?.success ? response.data : response;
             },
@@ -45,6 +48,7 @@ const rawMaterialApi = apiSlice.injectEndpoints({
                 method: "PUT",
                 body: data,
             }),
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             transformResponse: (response: { success: boolean; data: any } | any) => {
                 return response?.success ? response.data : response;
             },
@@ -60,4 +64,3 @@ export const {
     useDeleteRawMaterialMutation,
     useUpdateRawMaterialMutation,
 } = rawMaterialApi;
-

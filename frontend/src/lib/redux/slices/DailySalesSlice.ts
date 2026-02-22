@@ -5,6 +5,7 @@ const dailySalesApi = apiSlice.injectEndpoints({
         // Fetch all daily sales
         dailySales: builder.query({
             query: () => ({ url: "/daily-sales" }),
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             transformResponse: (response: { success: boolean; data: any[] } | any[]) => {
                 return Array.isArray(response) ? response : (response?.success ? response.data : response);
             },
@@ -13,6 +14,7 @@ const dailySalesApi = apiSlice.injectEndpoints({
         // Fetch a single daily sale by ID
         singleDailySale: builder.query({
             query: (id) => ({ url: `/daily-sales/${id}` }),
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             transformResponse: (response: { success: boolean; data: any } | any) => {
                 return response?.success ? response.data : response;
             },
@@ -25,6 +27,7 @@ const dailySalesApi = apiSlice.injectEndpoints({
                 method: "POST",
                 body: data,
             }),
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             transformResponse: (response: { success: boolean; data: any } | any) => {
                 return response?.success ? response.data : response;
             },
@@ -45,6 +48,7 @@ const dailySalesApi = apiSlice.injectEndpoints({
                 method: "PUT",
                 body: data,
             }),
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             transformResponse: (response: { success: boolean; data: any } | any) => {
                 return response?.success ? response.data : response;
             },
@@ -60,4 +64,3 @@ export const {
     useDeleteDailySaleMutation,
     useUpdateDailySaleMutation,
 } = dailySalesApi;
-

@@ -41,7 +41,8 @@ const RawMaterialManagement: React.FC = () => {
   const [updateRawMaterial] = useUpdateRawMaterialMutation();
   const [deleteRawMaterial] = useDeleteRawMaterialMutation();
 
-  const filteredRawMaterials = rawMaterials.filter(
+  const rawMaterialsArray = Array.isArray(rawMaterials) ? rawMaterials : [];
+  const filteredRawMaterials = rawMaterialsArray.filter(
     (item: RawMaterial) =>
       item.itemName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.purchasedBy.toLowerCase().includes(searchTerm.toLowerCase())
@@ -109,7 +110,7 @@ const RawMaterialManagement: React.FC = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold mb-6">
-        IFISHI Y'IBYO TWARANGUYE (RAW MATERIALS PURCHASE FORM)
+        IFISHI Y&apos;IBYO TWARANGUYE (RAW MATERIALS PURCHASE FORM)
       </h1>
 
       <div className="flex justify-between mb-6 gap-4">
@@ -161,9 +162,8 @@ const RawMaterialManagement: React.FC = () => {
             {filteredRawMaterials.map((item, index) => (
               <tr
                 key={item.id}
-                className={`text-center ${
-                  index % 2 === 0 ? "bg-white" : "bg-gray-50"
-                } hover:bg-gray-100 transition`}
+                className={`text-center ${index % 2 === 0 ? "bg-white" : "bg-gray-50"
+                  } hover:bg-gray-100 transition`}
               >
                 <td className="px-4 py-3 border">{index + 1}</td>
 

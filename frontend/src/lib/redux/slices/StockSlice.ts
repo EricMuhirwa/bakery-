@@ -5,6 +5,7 @@ const stockApi = apiSlice.injectEndpoints({
         // Stock Items Endpoints
         getAllStockItems: builder.query({
             query: () => ({ url: "/stock/items" }),
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             transformResponse: (response: { success: boolean; data: any[] }) => {
                 return response?.success ? response.data : response;
             },
@@ -13,6 +14,7 @@ const stockApi = apiSlice.injectEndpoints({
 
         getStockItemById: builder.query({
             query: (id) => ({ url: `/stock/items/${id}` }),
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             transformResponse: (response: { success: boolean; data: any }) => {
                 return response?.success ? response.data : response;
             },
@@ -98,6 +100,7 @@ const stockApi = apiSlice.injectEndpoints({
                     url: `/stock/movements${params.toString() ? `?${params.toString()}` : ''}`
                 };
             },
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             transformResponse: (response: { success: boolean; data: any[] }) => {
                 return response?.success ? response.data : response;
             },
@@ -111,6 +114,7 @@ const stockApi = apiSlice.injectEndpoints({
         // Stock Statistics & Reports
         getLowStockItems: builder.query({
             query: () => ({ url: "/stock/low-stock" }),
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             transformResponse: (response: { success: boolean; data: any[] }) => {
                 return response?.success ? response.data : response;
             },
@@ -119,6 +123,7 @@ const stockApi = apiSlice.injectEndpoints({
 
         getStockStatistics: builder.query({
             query: () => ({ url: "/stock/statistics" }),
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             transformResponse: (response: { success: boolean; data: any }) => {
                 return response?.success ? response.data : response;
             },

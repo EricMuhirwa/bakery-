@@ -50,15 +50,15 @@ const DailySalesManagement: React.FC = () => {
     const [updateDailySale] = useUpdateDailySaleMutation();
     const [deleteDailySale] = useDeleteDailySaleMutation();
 
-    // 🔥 FILTER + SORT
-    const filteredDailySales = dailySales
-        ?.filter((sale: DailySale) =>
+    const dailySalesArray = Array.isArray(dailySales) ? dailySales : [];
+    const filteredDailySales = dailySalesArray
+        .filter((sale: DailySale) =>
             sale.item.toLowerCase().includes(searchTerm.toLowerCase())
         )
-        ?.filter((sale: DailySale) =>
+        .filter((sale: DailySale) =>
             selectedDate ? sale.saleDate === selectedDate : true
         )
-        ?.sort(
+        .sort(
             (a: DailySale, b: DailySale) =>
                 new Date(b.saleDate).getTime() -
                 new Date(a.saleDate).getTime()
@@ -275,7 +275,7 @@ const DailySalesManagement: React.FC = () => {
                         <tfoot>
                             <tr className="bg-gray-100 font-bold">
                                 <td colSpan={6} className="border px-4 py-2 text-right">
-                                    Amafaranga y'Ibyagurishijwe byose:
+                                    Amafaranga y&apos;Ibyagurishijwe byose:
                                 </td>
                                 <td className="border px-4 py-2">
                                     {totalSalesAmount}

@@ -3,11 +3,9 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import {
     Package,
-    AlertTriangle,
     Search,
     Download,
     History,
-    Box,
     ArrowUpCircle,
     ArrowDownCircle,
     User,
@@ -16,9 +14,6 @@ import {
     ChevronDown,
     ChevronUp,
     Loader2,
-    TrendingUp,
-    CreditCard,
-    Users,
     Coffee,
     PlusCircle
 } from 'lucide-react';
@@ -89,24 +84,7 @@ interface StockOutFormData {
     notes: string;
 }
 
-interface Payment {
-    id: string;
-    amount: number;
-    status: string;
-    createdAt: string;
-    paymentMethod?: string;
-    userId?: string;
-}
 
-interface Subscription {
-    id: string;
-    planName: string;
-    amount: number;
-    status: string;
-    startDate: string;
-    endDate: string;
-    userId?: string;
-}
 
 interface CoffeeItem {
     id: string;
@@ -131,7 +109,7 @@ interface CreateStockItemPayload {
     initialStock?: number;
 }
 
-type TimeFilter = 'daily' | 'monthly' | 'yearly';
+
 
 const StockManagementPage = () => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -141,7 +119,7 @@ const StockManagementPage = () => {
     const [showStockInModal, setShowStockInModal] = useState(false);
     const [showStockOutModal, setShowStockOutModal] = useState(false);
     const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
-    const [timeFilter, setTimeFilter] = useState<TimeFilter>('daily');
+
     const [isCreatingStockItem, setIsCreatingStockItem] = useState(false);
     const [, setSelectedCoffeeProduct] = useState<CoffeeItem | null>(null);
     const [processingCoffeeId, setProcessingCoffeeId] = useState<string | null>(null);
@@ -155,15 +133,15 @@ const StockManagementPage = () => {
         isFetching: isFetchingStockItems
     } = useGetAllStockItemsQuery({});
 
-    const { data: lowStockItemsData } = useGetLowStockItemsQuery({});
+    useGetLowStockItemsQuery({});
     const { isLoading: loadingStats } = useGetStockStatisticsQuery({});
 
     // Coffee Items Query
     const { data: coffeeItemsData, isLoading: loadingCoffees } = useCoffeesQuery({});
 
     // Payments and Subscriptions Queries
-    const { data: paymentsData, isLoading: loadingPayments } = usePaymentsQuery({});
-    const { data: subscriptionsData, isLoading: loadingSubscriptions } = useBoughtSubscriptionQuery({});
+    const { isLoading: loadingPayments } = usePaymentsQuery({});
+    const { isLoading: loadingSubscriptions } = useBoughtSubscriptionQuery({});
 
     // Mutations
     const [stockIn, { isLoading: isStockingIn }] = useStockInMutation();
@@ -173,12 +151,11 @@ const StockManagementPage = () => {
     // Safely handle non-array responses
     const stockItems = useMemo(() => {
         return Array.isArray(stockItemsData) ? stockItemsData : [];
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [stockItemsData, manualRefreshTrigger]); // Add manualRefreshTrigger to force re-render
 
-    const lowStockItems = useMemo(() => Array.isArray(lowStockItemsData) ? lowStockItemsData : [], [lowStockItemsData]);
+
     const coffeeItems = useMemo(() => Array.isArray(coffeeItemsData) ? coffeeItemsData : [], [coffeeItemsData]);
-    const payments = useMemo(() => Array.isArray(paymentsData) ? paymentsData : [], [paymentsData]);
-    const subscriptions = useMemo(() => Array.isArray(subscriptionsData) ? subscriptionsData : [], [subscriptionsData]);
 
     // Build a map of coffee product IDs to stock items
     const stockItemMap = useMemo(() => {
@@ -196,50 +173,6 @@ const StockManagementPage = () => {
         return coffeeItems.filter(coffee => !stockItemMap.has(coffee.id));
     }, [coffeeItems, stockItemMap]);
 
-    // Calculate financial statistics based on time filter
-    const financialStats = useMemo(() => {
-        const now = new Date();
-        let startDate = new Date();
-
-        switch (timeFilter) {
-            case 'daily':
-                startDate.setHours(0, 0, 0, 0);
-                break;
-            case 'monthly':
-                startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-                break;
-            case 'yearly':
-                startDate = new Date(now.getFullYear(), 0, 1);
-                break;
-        }
-
-        const filteredPayments = payments.filter((payment: Payment) => {
-            const paymentDate = new Date(payment.createdAt);
-            return paymentDate >= startDate && payment.status === 'completed';
-        });
-
-        const filteredSubscriptions = subscriptions.filter((sub: Subscription) => {
-            const subDate = new Date(sub.startDate);
-            return subDate >= startDate && sub.status === 'active';
-        });
-
-        const totalPayments = filteredPayments.reduce((sum, payment) => sum + (payment.amount || 0), 0);
-        const totalSubscriptions = filteredSubscriptions.reduce((sum, sub) => sum + (sub.amount || 0), 0);
-        const newSubscriptions = filteredSubscriptions.length;
-        const uniqueCustomers = new Set([
-            ...filteredPayments.map(p => p.userId).filter(Boolean),
-            ...filteredSubscriptions.map(s => s.userId).filter(Boolean)
-        ]).size;
-
-        return {
-            totalRevenue: totalPayments + totalSubscriptions,
-            subscriptionRevenue: totalSubscriptions,
-            oneTimePayments: totalPayments,
-            newSubscriptions,
-            uniqueCustomers,
-            period: timeFilter
-        };
-    }, [payments, subscriptions, timeFilter]);
 
     // Build filters for movements query
     const movementFilters = useMemo(() => {
@@ -474,13 +407,7 @@ const StockManagementPage = () => {
         }).format(amount);
     }, []);
 
-    const getPeriodLabel = useCallback(() => {
-        switch (timeFilter) {
-            case 'daily': return 'Today';
-            case 'monthly': return 'This Month';
-            case 'yearly': return 'This Year';
-        }
-    }, [timeFilter]);
+
 
     // Debug: Log stock items to verify they're being loaded
     useEffect(() => {
