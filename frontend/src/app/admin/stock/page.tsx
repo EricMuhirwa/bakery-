@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 import {
     Package,
     Search,
@@ -489,10 +490,13 @@ const StockManagementPage = () => {
                                         className="bg-white rounded-lg p-3 shadow-sm flex items-center gap-3 flex-1 min-w-[250px]"
                                     >
                                         {coffee.image && (
-                                            <img
+                                            <Image
                                                 src={coffee.image}
                                                 alt={coffee.title}
                                                 className="w-12 h-12 object-cover rounded-lg"
+                                                width={48}
+                                                height={48}
+                                                priority={false}
                                             />
                                         )}
                                         <div className="flex-1">
@@ -548,9 +552,11 @@ const StockManagementPage = () => {
                             </div>
 
                             <select
+                                title="Filter by movement type"
                                 value={filterMovementType}
                                 onChange={(e) => setFilterMovementType(e.target.value)}
                                 className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                                aria-label="Filter movements by type"
                             >
                                 <option value="All">All Movements</option>
                                 <option value="IN">Stock IN Only</option>
@@ -559,16 +565,22 @@ const StockManagementPage = () => {
 
                             <input
                                 type="date"
+                                title="Start date for filtering"
+                                placeholder="From date"
                                 value={dateFrom}
                                 onChange={(e) => setDateFrom(e.target.value)}
                                 className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                                aria-label="Filter movements from date"
                             />
 
                             <input
                                 type="date"
+                                title="End date for filtering"
+                                placeholder="To date"
                                 value={dateTo}
                                 onChange={(e) => setDateTo(e.target.value)}
                                 className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                                aria-label="Filter movements to date"
                             />
                         </div>
 
@@ -738,6 +750,8 @@ const StockManagementPage = () => {
                             <button
                                 onClick={() => setShowStockInModal(false)}
                                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                                aria-label="Close receive stock modal"
+                                title="Close modal"
                             >
                                 <X className="w-6 h-6 text-green-500" />
                             </button>
@@ -755,6 +769,8 @@ const StockManagementPage = () => {
                                         onChange={(e) => setStockInForm({ ...stockInForm, itemId: e.target.value })}
                                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                                         required
+                                        aria-label="Select item to receive"
+                                        title="Select an item from inventory"
                                     >
                                         <option value="">Choose an item...</option>
                                         {stockItems && stockItems.length > 0 ? (
@@ -838,9 +854,11 @@ const StockManagementPage = () => {
                                     </label>
                                     <input
                                         type="date"
+                                        title="Set expiry date"
                                         value={stockInForm.expiryDate}
                                         onChange={(e) => setStockInForm({ ...stockInForm, expiryDate: e.target.value })}
                                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                        aria-label="Item expiry date"
                                     />
                                 </div>
 
@@ -850,10 +868,12 @@ const StockManagementPage = () => {
                                     </label>
                                     <input
                                         type="number"
+                                        title="Enter purchase price per unit"
                                         value={stockInForm.purchasePrice || ''}
                                         onChange={(e) => setStockInForm({ ...stockInForm, purchasePrice: parseFloat(e.target.value) || 0 })}
                                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                                         placeholder="0.00"
+                                        aria-label="Purchase price per unit"
                                         min="0"
                                         step="0.01"
                                     />
@@ -919,6 +939,8 @@ const StockManagementPage = () => {
                             <button
                                 onClick={() => setShowStockOutModal(false)}
                                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                                aria-label="Close issue stock modal"
+                                title="Close modal"
                             >
                                 <X className="w-6 h-6 text-gray-500" />
                             </button>
@@ -936,6 +958,8 @@ const StockManagementPage = () => {
                                         onChange={(e) => setStockOutForm({ ...stockOutForm, itemId: e.target.value })}
                                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
                                         required
+                                        aria-label="Select item to issue"
+                                        title="Select an item from inventory"
                                     >
                                         <option value="">Choose an item...</option>
                                         {stockItems && stockItems.length > 0 ? (
@@ -982,6 +1006,8 @@ const StockManagementPage = () => {
                                         onChange={(e) => setStockOutForm({ ...stockOutForm, reason: e.target.value })}
                                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
                                         required
+                                        aria-label="Select reason for stock issue"
+                                        title="Select the reason for stock issue"
                                     >
                                         <option value="Sale">Sale</option>
                                         <option value="Production Use">Production Use</option>
