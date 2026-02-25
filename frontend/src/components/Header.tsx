@@ -25,10 +25,10 @@ export default function Header() {
                 <div className="logo">
                     <Link href="/">
                         <Image
-                            src="/logo.jpg"
+                            src="/images/profile.jpeg"
                             alt="Bakery Management System"
-                            width={64} 
-                            height={64}
+                            width={70} 
+                            height={70}
                             className="h-16 w-16 rounded-full cursor-pointer hover:scale-105 transition-transform"
                         />
 

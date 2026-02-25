@@ -18,7 +18,7 @@ const steps = [
         number: 3,
         title: 'Pay for your Subscription',
         description: 'Pay for your subscription using our secure payment gateway',
-        image: '/images/cheese brea.JPG'
+        image: '/images/bakery1.jpg'
     },
     {
         number: 4,

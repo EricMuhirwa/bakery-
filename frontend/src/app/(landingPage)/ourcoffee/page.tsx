@@ -17,14 +17,14 @@ const OurCoffee: React.FC = () => {
     <>
       {/* Hero Section */}
       <section className="relative h-screen flex items-center justify-center text-white text-center">
-        <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url('/images/me5.webp')" }}></div>
+        <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url('/images/package.jpeg')" }}></div>
 
         {/* Overlay */}
         <div className="absolute inset-0 bg-black/50"></div>
 
         {/* Hero Content */}
         <div className="relative z-10 px-6">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Discover the World Through CEBK Bakery Ltd</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">Discover the World Through CEBK Unique Bakery Ltd</h1>
           <p className="mb-6 text-lg max-w-lg mx-auto">
             Explore single-origin breads from the best bakers worldwide. Delivered fresh to your door.
           </p>

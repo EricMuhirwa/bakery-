@@ -6,8 +6,8 @@ import Footer from "@/components/Footer";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-    title: "Bakery Ineza",
-    description: "Uruyange Coffee Shop",
+    title: "CEBK Unique",
+    description: "Bakery CEBK Unique",
     icons: {
         icon: '/favicon.ico',
         shortcut: '/images/logo-png.png',

@@ -22,7 +22,7 @@ const Navbar = () => {
                 </div>
                 <div className='cursor-pointer rounded-full bg-[#F0F2F5] '>
                     {sessionData?.user ? (
-                        <Image src={sessionData?.user?.image || '/images/profile1.jpg'} alt='profile' width={50} height={50} className='rounded' />
+                        <Image src={sessionData?.user?.image || '/images/profile.jpeg'} alt='profile' width={50} height={50} className='rounded' />
                     ) : ""}
                 </div>
             </div>

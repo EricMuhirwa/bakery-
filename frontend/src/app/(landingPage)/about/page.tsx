@@ -192,9 +192,9 @@ const About = () => {
       {/* Call to Action */}
       <section className="py-16 bg-gray-900 text-white">
         <div className="container mx-auto px-6 text-center">
-          <h2 className="text-3xl font-bold mb-4">Join Us on This Bakery Journey</h2>
+          <h2 className="text-3xl font-bold mb-4">Join Us on This CEBK Unique Bakery Journey</h2>
           <p className="mb-8 max-w-2xl mx-auto">
-            At Uruyange Bakery, we believe that bread is more than a food—it&rsquo;s an
+            At CEBK Unique Bakery, we believe that bread is more than a food—it&rsquo;s an
             experience. Discover the perfect blend for your taste today.
           </p>
           <Link href="/ourcoffee" className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-6 rounded shadow transition-colors">

@@ -48,17 +48,18 @@ export default function Footer() {
           </div>
           <p className="font-semibold">SUPPORT</p>
           <a href="tel:+48452037323" className="text-white hover:text-gray-300 transition-colors">
-          +250 788 563 705
-          </a>
+          Email: uniquebakeryma@gmail.com </a><p>
+          Phone: +250 794 072 883
+          </p>
         </div>
       </div>
 
       {/* Footer Bottom Section */}
       <div className="text-gray-300 space-y-2 text-center">
-        <p>We&rsquo;re located in The Gare Masaka  — a historic MMM</p>
-        <p>neighborhood with a rich history of black entrepreneurs</p>
-        <p>and culture. We&rsquo;re honored to have you as a partner</p>
-        <p>in this journey to revitalize black and brown entrepreneurship.</p>
+        <p>We&rsquo;re located in The Bus Parking Masaka  </p>
+      
+        <p>Your day deserves something sweet , stop by and treat yourself 🍰</p>
+        <p>Life’s short, eat the cake – we’ve got plenty waiting for you!.</p>
       </div>
 
 
@@ -82,7 +83,7 @@ export default function Footer() {
           </Link>
         </div>
         <div>
-          <p className="text-gray-300">© 2026 CEBK bakery Ltd</p>
+          <p className="text-gray-300">© 2026 CEBK Unique bakery Ltd</p>
         </div>
       </div>
     </footer>

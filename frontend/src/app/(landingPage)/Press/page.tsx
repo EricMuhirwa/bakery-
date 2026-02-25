@@ -18,7 +18,7 @@ const Press: React.FC = () => {
         <ul className="list-disc pl-6 mt-2">
           <li>&rdquo;Rwandan Excellence in a Cup &rdquo; Coffee World Magazine</li>
           <li>&rdquo;The Sustainable Brew &rdquo; EcoDaily</li>
-          <li>&rdquo;Meet the People Behind Uruyange &rdquo; Local Tastemakers Podcast</li>
+          <li>&rdquo;Meet the People Behind CEBK Unique  &rdquo; Local Tastemakers Podcast</li>
         </ul>
       </div>
     </div>

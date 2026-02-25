@@ -33,7 +33,7 @@ const Recommended: React.FC = () => {
         <div id="Recommendation" className="text-center mb-12">
           <h2 className="text-3xl font-bold text-gray-800">RECOMMENDED BY</h2>
           <div className="flex flex-wrap justify-center gap-6 mt-6">
-            {["bakery1.jpg", "bakery2.jpg", "bakery3.jpg", "logo.jpg"].map(
+            {["bakery1.jpg", "bakery2.jpg", "bakery3.jpg", "package.jpeg"].map(
               (img, index) => (
                 <div key={index} className="relative w-40 h-40">
                   <Image
@@ -65,7 +65,7 @@ const Recommended: React.FC = () => {
                   />
                 </div>
                 <h3 className="mt-4 text-lg font-semibold text-gray-800">{coffee.title}</h3>
-                <p className="text-gray-600">${coffee.price.toFixed(2)}</p>
+                <p className="text-gray-600">RWF {coffee.price.toFixed(2)}</p>
               </div>
             </Link>
           ))}
