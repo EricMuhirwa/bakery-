@@ -66,7 +66,7 @@ export const authOptions = {
     },
   },
   pages: {
-    signIn: "/auth",
+    breaksignIn: "/auth",
   },
   session: {
     strategy: "jwt",

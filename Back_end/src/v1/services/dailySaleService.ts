@@ -4,7 +4,7 @@ import { prisma as prismaClient } from '../config/database';
 const dailySaleService = {
     createDailySale: async (dailySaleData: any): Promise<ReturnType<typeof DailySaleDTO.getDailySaleDTO>> => {
         const dailySale = await prismaClient.dailySale.create({ 
-            data: dailySaleData
+            data: DailySaleDTO.createDailySaleDTO(dailySaleData)
         });
         return DailySaleDTO.getDailySaleDTO(dailySale);
     },
@@ -30,7 +30,7 @@ const dailySaleService = {
     updateDailySale: async (id: string, dailySaleData: any): Promise<ReturnType<typeof DailySaleDTO.getDailySaleDTO>> => {
         const updatedDailySale = await prismaClient.dailySale.update({
             where: { id },
-            data: dailySaleData
+            data: DailySaleDTO.updateDailySaleDTO(dailySaleData)
         });
         return DailySaleDTO.getDailySaleDTO(updatedDailySale);
     }
