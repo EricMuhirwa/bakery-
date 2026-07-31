@@ -54,6 +54,9 @@ exports.stockService = {
     },
     // Delete stock item
     deleteStockItem: async (itemId) => {
+        await database_1.prisma.stockMovement.deleteMany({
+            where: { itemId: itemId },
+        });
         await database_1.prisma.stockItem.delete({
             where: { id: itemId },
         });

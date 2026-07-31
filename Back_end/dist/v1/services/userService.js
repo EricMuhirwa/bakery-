@@ -13,7 +13,12 @@ exports.userService = {
     createUser: async (userData) => {
         const hashedPassword = await bcryptjs_1.default.hash(userData.password, 10);
         const user = await database_1.prisma.user.create({
-            data: { ...userData, password: hashedPassword, role: 'user' },
+            data: {
+                email: userData.email,
+                password: hashedPassword,
+                role: 'user',
+                ...(userData.name && { username: userData.name }),
+            },
         });
         return userDTO_1.default.getUserDTO(user);
     },
