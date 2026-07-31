@@ -25,15 +25,33 @@ type UpdateProfileData = {
 export const userService = {
   createUser: async (userData: UserData): Promise<ReturnType<typeof userDTO.getUserDTO>> => {
     const hashedPassword = await bcrypt.hash(userData.password, 10);
-    const user = await prisma.user.create({
-      data: {
+    const { MongoClient } = require('mongodb');
+    const client = new MongoClient(process.env.DATABASE_URL as string);
+    try {
+      await client.connect();
+      const db = client.db();
+      const result = await db.collection('User').insertOne({
         email: userData.email,
         password: hashedPassword,
         role: 'user',
-        ...(userData.name && { username: userData.name }),
-      },
-    });
-    return userDTO.getUserDTO(user);
+        username: userData.name || null,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      });
+      
+      const user = await prisma.user.findUnique({
+        where: { id: result.insertedId.toString() }
+      });
+      if (!user) throw new Error("User creation failed");
+      return userDTO.getUserDTO(user);
+    } catch (error: any) {
+      if (error.code === 11000) {
+        throw new Error("Email already exists");
+      }
+      throw error;
+    } finally {
+      await client.close();
+    }
   },
 
   getUserById: async (userId: string): Promise<ReturnType<typeof userDTO.getUserDTO> | null> => {

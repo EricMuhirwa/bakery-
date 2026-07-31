@@ -12,15 +12,35 @@ const cloudinary_1 = require("../utils/cloudinary");
 exports.userService = {
     createUser: async (userData) => {
         const hashedPassword = await bcryptjs_1.default.hash(userData.password, 10);
-        const user = await database_1.prisma.user.create({
-            data: {
+        const { MongoClient } = require('mongodb');
+        const client = new MongoClient(process.env.DATABASE_URL);
+        try {
+            await client.connect();
+            const db = client.db();
+            const result = await db.collection('User').insertOne({
                 email: userData.email,
                 password: hashedPassword,
                 role: 'user',
-                ...(userData.name && { username: userData.name }),
-            },
-        });
-        return userDTO_1.default.getUserDTO(user);
+                username: userData.name || null,
+                createdAt: new Date(),
+                updatedAt: new Date()
+            });
+            const user = await database_1.prisma.user.findUnique({
+                where: { id: result.insertedId.toString() }
+            });
+            if (!user)
+                throw new Error("User creation failed");
+            return userDTO_1.default.getUserDTO(user);
+        }
+        catch (error) {
+            if (error.code === 11000) {
+                throw new Error("Email already exists");
+            }
+            throw error;
+        }
+        finally {
+            await client.close();
+        }
     },
     getUserById: async (userId) => {
         const user = await database_1.prisma.user.findUnique({ where: { id: userId } });
