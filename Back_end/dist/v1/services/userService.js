@@ -12,34 +12,36 @@ const cloudinary_1 = require("../utils/cloudinary");
 exports.userService = {
     createUser: async (userData) => {
         const hashedPassword = await bcryptjs_1.default.hash(userData.password, 10);
-        const { MongoClient } = require('mongodb');
-        const client = new MongoClient(process.env.DATABASE_URL, { tls: true });
         try {
-            await client.connect();
-            const db = client.db();
-            const result = await db.collection('User').insertOne({
-                email: userData.email,
-                password: hashedPassword,
-                role: 'user',
-                username: userData.name || null,
-                createdAt: new Date(),
-                updatedAt: new Date()
+            // Use raw MongoDB insert via Prisma's existing connection
+            // This bypasses Prisma's ORM transaction wrapping while reusing the working connection
+            const result = await database_1.prisma.$runCommandRaw({
+                insert: 'User',
+                documents: [{
+                        email: userData.email,
+                        password: hashedPassword,
+                        role: 'user',
+                        username: userData.name || null,
+                        createdAt: { $date: new Date().toISOString() },
+                        updatedAt: { $date: new Date().toISOString() }
+                    }]
             });
+            if (!result.ok) {
+                throw new Error(result.writeErrors?.[0]?.errmsg || 'User creation failed');
+            }
+            // Fetch the created user via Prisma to get properly typed result
             const user = await database_1.prisma.user.findUnique({
-                where: { id: result.insertedId.toString() }
+                where: { email: userData.email }
             });
             if (!user)
                 throw new Error("User creation failed");
             return userDTO_1.default.getUserDTO(user);
         }
         catch (error) {
-            if (error.code === 11000) {
+            if (error.code === 11000 || error.message?.includes('duplicate key') || error.message?.includes('E11000')) {
                 throw new Error("Email already exists");
             }
             throw error;
-        }
-        finally {
-            await client.close();
         }
     },
     getUserById: async (userId) => {
