@@ -87,6 +87,9 @@ export const stockService = {
 
   // Delete stock item
   deleteStockItem: async (itemId: string) => {
+    await prisma.stockMovement.deleteMany({
+      where: { itemId: itemId },
+    });
     await prisma.stockItem.delete({
       where: { id: itemId },
     });

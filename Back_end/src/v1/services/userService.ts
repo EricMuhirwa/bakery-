@@ -26,7 +26,12 @@ export const userService = {
   createUser: async (userData: UserData): Promise<ReturnType<typeof userDTO.getUserDTO>> => {
     const hashedPassword = await bcrypt.hash(userData.password, 10);
     const user = await prisma.user.create({
-      data: { ...userData, password: hashedPassword, role: 'user' },
+      data: {
+        email: userData.email,
+        password: hashedPassword,
+        role: 'user',
+        ...(userData.name && { username: userData.name }),
+      },
     });
     return userDTO.getUserDTO(user);
   },

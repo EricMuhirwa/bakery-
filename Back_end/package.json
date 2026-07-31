@@ -28,6 +28,7 @@
     "stripe": "^17.7.0"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
     "@types/bson": "^4.0.5",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",

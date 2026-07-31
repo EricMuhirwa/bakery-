@@ -142,7 +142,7 @@ model StockItem {
 model StockMovement {
   id            String            @id @default(auto()) @map("_id") @db.ObjectId
   itemId        String            @db.ObjectId
-  item          StockItem         @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  item          StockItem         @relation(fields: [itemId], references: [id])
   type          StockMovementType
   quantity      Float
   previousStock Float
