@@ -13,7 +13,7 @@ exports.userService = {
     createUser: async (userData) => {
         const hashedPassword = await bcryptjs_1.default.hash(userData.password, 10);
         const { MongoClient } = require('mongodb');
-        const client = new MongoClient(process.env.DATABASE_URL);
+        const client = new MongoClient(process.env.DATABASE_URL, { tls: true });
         try {
             await client.connect();
             const db = client.db();
