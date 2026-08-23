@@ -56,29 +56,53 @@ export const stockService = {
     // Ensure currentStock has a default value if not provided
     const currentStock = itemData.currentStock ?? 0;
     
-    const item = await prisma.stockItem.create({
-      data: {
-        name: itemData.name,
-        category: itemData.category,
-        currentStock: currentStock,
-        unit: itemData.unit,
-        minStock: itemData.minStock,
-        maxStock: itemData.maxStock,
-        reorderPoint: itemData.reorderPoint,
-        supplier: itemData.supplier,
-        costPerUnit: itemData.costPerUnit,
-        lastRestocked: currentStock > 0 ? new Date() : null,
-      },
+    const newItem = await prisma.$transaction(async (tx) => {
+      const item = await tx.stockItem.create({
+        data: {
+          name: itemData.name,
+          category: itemData.category,
+          currentStock: currentStock,
+          unit: itemData.unit,
+          minStock: itemData.minStock,
+          maxStock: itemData.maxStock,
+          reorderPoint: itemData.reorderPoint,
+          supplier: itemData.supplier,
+          costPerUnit: itemData.costPerUnit,
+          lastRestocked: currentStock > 0 ? new Date() : null,
+        },
+      });
+
+      if (currentStock > 0) {
+        await tx.stockMovement.create({
+          data: {
+            itemId: item.id,
+            type: 'IN',
+            quantity: currentStock,
+            previousStock: 0,
+            newStock: currentStock,
+            reference: `INIT-STOCK-${Date.now()}`,
+            reason: 'Initial Stock',
+            notes: 'Added during item creation',
+            supplier: itemData.supplier,
+            purchasePrice: itemData.costPerUnit,
+          },
+        });
+      }
+      return item;
     });
-    return stockDTO.getStockItemDTO(item);
+
+    return stockDTO.getStockItemDTO(newItem);
   },
 
   // Update stock item
   updateStockItem: async (itemId: string, itemData: Partial<CreateStockItemDTO>) => {
+    // Exclude currentStock to prevent direct updates bypassing movements
+    const { currentStock, ...safeData } = itemData;
+
     const item = await prisma.stockItem.update({
       where: { id: itemId },
       data: {
-        ...itemData,
+        ...safeData,
         updatedAt: new Date(),
       },
     });
@@ -87,124 +111,134 @@ export const stockService = {
 
   // Delete stock item
   deleteStockItem: async (itemId: string) => {
-    await prisma.stockMovement.deleteMany({
-      where: { itemId: itemId },
-    });
-    await prisma.stockItem.delete({
-      where: { id: itemId },
+    await prisma.$transaction(async (tx) => {
+      await tx.stockMovement.deleteMany({
+        where: { itemId: itemId },
+      });
+      await tx.stockItem.delete({
+        where: { id: itemId },
+      });
     });
     return { message: 'Stock item deleted successfully' };
   },
 
   // Stock IN - Add stock
   stockIn: async (stockInData: CreateStockInDTO, userId?: string) => {
-    // Get current stock item
-    const stockItem = await prisma.stockItem.findUnique({
-      where: { id: stockInData.itemId },
-    });
+    const result = await prisma.$transaction(async (tx) => {
+      // Get current stock item
+      const stockItem = await tx.stockItem.findUnique({
+        where: { id: stockInData.itemId },
+      });
 
-    if (!stockItem) {
-      throw new Error('Stock item not found');
-    }
+      if (!stockItem) {
+        throw new Error('Stock item not found');
+      }
 
-    const previousStock = stockItem.currentStock;
-    const newStock = previousStock + stockInData.quantity;
+      const previousStock = stockItem.currentStock;
+      const newStock = previousStock + stockInData.quantity;
 
-    // Update stock item
-    const updatedItem = await prisma.stockItem.update({
-      where: { id: stockInData.itemId },
-      data: {
-        currentStock: newStock,
-        lastRestocked: new Date(),
-        updatedAt: new Date(),
-      },
-    });
+      // Update stock item
+      const updatedItem = await tx.stockItem.update({
+        where: { id: stockInData.itemId },
+        data: {
+          currentStock: newStock,
+          lastRestocked: new Date(),
+          updatedAt: new Date(),
+        },
+      });
 
-    // Create stock movement record
-    const movement = await prisma.stockMovement.create({
-      data: {
-        itemId: stockInData.itemId,
-        type: 'IN',
-        quantity: stockInData.quantity,
-        previousStock: previousStock,
-        newStock: newStock,
-        reference: stockInData.reference || `STOCK-IN-${Date.now()}`,
-        userId: userId,
-        reason: 'Purchase Order',
-        notes: stockInData.notes,
-        supplier: stockInData.supplier,
-        batchNumber: stockInData.batchNumber,
-        expiryDate: stockInData.expiryDate ? new Date(stockInData.expiryDate) : null,
-        purchasePrice: stockInData.purchasePrice,
-      },
-      include: {
-        item: true,
-        user: true,
-      },
+      // Create stock movement record
+      const movement = await tx.stockMovement.create({
+        data: {
+          itemId: stockInData.itemId,
+          type: 'IN',
+          quantity: stockInData.quantity,
+          previousStock: previousStock,
+          newStock: newStock,
+          reference: stockInData.reference || `STOCK-IN-${Date.now()}`,
+          userId: userId,
+          reason: 'Purchase Order',
+          notes: stockInData.notes,
+          supplier: stockInData.supplier,
+          batchNumber: stockInData.batchNumber,
+          expiryDate: stockInData.expiryDate ? new Date(stockInData.expiryDate) : null,
+          purchasePrice: stockInData.purchasePrice,
+        },
+        include: {
+          item: true,
+          user: true,
+        },
+      });
+
+      return { updatedItem, movement };
     });
 
     return {
-      item: stockDTO.getStockItemDTO(updatedItem),
+      item: stockDTO.getStockItemDTO(result.updatedItem),
       movement: stockDTO.getStockMovementDTO(
-        movement,
-        movement.item.name,
-        movement.user?.email || undefined
+        result.movement,
+        result.movement.item.name,
+        result.movement.user?.email || undefined
       ),
     };
   },
 
   // Stock OUT - Remove stock
   stockOut: async (stockOutData: CreateStockOutDTO, userId?: string) => {
-    // Get current stock item
-    const stockItem = await prisma.stockItem.findUnique({
-      where: { id: stockOutData.itemId },
-    });
+    const result = await prisma.$transaction(async (tx) => {
+      // Get current stock item
+      const stockItem = await tx.stockItem.findUnique({
+        where: { id: stockOutData.itemId },
+      });
 
-    if (!stockItem) {
-      throw new Error('Stock item not found');
-    }
+      if (!stockItem) {
+        throw new Error('Stock item not found');
+      }
 
-    if (stockItem.currentStock < stockOutData.quantity) {
-      throw new Error('Insufficient stock available');
-    }
+      if (stockItem.currentStock < stockOutData.quantity) {
+        throw new Error('Insufficient stock available');
+      }
 
-    const previousStock = stockItem.currentStock;
-    const newStock = previousStock - stockOutData.quantity;
+      const previousStock = stockItem.currentStock;
+      const newStock = previousStock - stockOutData.quantity;
 
-    // Update stock item
-    const updatedItem = await prisma.stockItem.update({
-      where: { id: stockOutData.itemId },
-      data: {
-        currentStock: newStock,
-        updatedAt: new Date(),
-      },
-    });
+      // Update stock item
+      const updatedItem = await tx.stockItem.update({
+        where: { id: stockOutData.itemId },
+        data: {
+          currentStock: newStock,
+          updatedAt: new Date(),
+        },
+      });
 
-    // Create stock movement record
-    const movement = await prisma.stockMovement.create({
-      data: {
-        itemId: stockOutData.itemId,
-        type: 'OUT',
-        quantity: stockOutData.quantity,
-        previousStock: previousStock,
-        newStock: newStock,
-        reference: stockOutData.reference,
-        userId: userId,
-        reason: stockOutData.reason,
-        notes: stockOutData.notes,
-      },
-      include: {
-        item: true,
-        user: true,
-      },
+      // Create stock movement record
+      const movement = await tx.stockMovement.create({
+        data: {
+          itemId: stockOutData.itemId,
+          type: 'OUT',
+          quantity: stockOutData.quantity,
+          previousStock: previousStock,
+          newStock: newStock,
+          reference: stockOutData.reference,
+          userId: userId,
+          reason: stockOutData.reason,
+          notes: stockOutData.notes,
+        },
+        include: {
+          item: true,
+          user: true,
+        },
+      });
+
+      return { updatedItem, movement };
     });
 
     return {
-      item: stockDTO.getStockItemDTO(updatedItem),
+      item: stockDTO.getStockItemDTO(result.updatedItem),
       movement: stockDTO.getStockMovementDTO(
-        movement,
-        movement.item.name,
-        movement.user?.email || undefined
+        result.movement,
+        result.movement.item.name,
+        result.movement.user?.email || undefined
       ),
     };
   },
@@ -237,15 +271,6 @@ export const stockService = {
         dateTo.setHours(23, 59, 59, 999);
         where.date.lte = dateTo;
       }
-    }
-
-    if (filters?.search) {
-      // MongoDB doesn't support case-insensitive search directly in Prisma
-      // We'll filter in memory after fetching
-      where.OR = [
-        { reference: { contains: filters.search } },
-        { reason: { contains: filters.search } },
-      ];
     }
 
     let movements = await prisma.stockMovement.findMany({

@@ -16,7 +16,6 @@ module.exports = {
   updateStockItemSchema: Joi.object({
     name: Joi.string(),
     category: Joi.string().valid('Ingredients', 'Products', 'Packaging'),
-    currentStock: Joi.number().min(0),
     unit: Joi.string(),
     minStock: Joi.number().min(0),
     maxStock: Joi.number().min(0),
